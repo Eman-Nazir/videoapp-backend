@@ -105,6 +105,12 @@ STRIPE_SECRET_KEY
 UPSTASH_REDIS_REST_URL
 UPSTASH_REDIS_REST_TOKEN
 
+## API Documentation
+Interactive Swagger docs available at:
+https://videoapp-backend-production-a823.up.railway.app/api-docs
+
+
+
 ## Local Setup
 
 ```bash
