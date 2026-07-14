@@ -5,7 +5,7 @@ import helmet from "helmet";
 import compression from "compression";
 import { apiLimiter } from "./middlewares/rateLimit.middleware.js";
 
-// ✅ ALL route imports at top
+//  ALL route imports at top
 import userRouter from "./routes/user.routes.js";
 import videoRouter from "./routes/video.routes.js";
 import commentRouter from "./routes/comment.routes.js";
@@ -45,7 +45,7 @@ app.use(express.urlencoded({ extended: true, limit: "16kb" }));
 app.use(express.static("public"));
 app.use(cookieParser());
 
-// ✅ test route
+//  test route
 app.get("/test-compression", (req, res) => {
   console.log("test route hit!");
   const data = { message: "test ".repeat(500) };
