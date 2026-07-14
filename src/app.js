@@ -4,6 +4,8 @@ import cookieParser from "cookie-parser";
 import helmet from "helmet";
 import compression from "compression";
 import { apiLimiter } from "./middlewares/rateLimit.middleware.js";
+import swaggerUi from "swagger-ui-express";
+import swaggerSpec from "./swagger.js";
 
 //  ALL route imports at top
 import userRouter from "./routes/user.routes.js";
@@ -52,6 +54,16 @@ app.get("/test-compression", (req, res) => {
   res.json(data);
 });
 
+//  Swagger route 
+app.use(
+  "/api-docs",
+  swaggerUi.serve,
+  swaggerUi.setup(swaggerSpec, {
+    customSiteTitle: "VideoApp API Docs",
+    customCss: ".swagger-ui .topbar { display: none }",
+  })
+);
+
 // routes declaration
 app.use("/api/v1/users", userRouter);
 app.use("/api/v1/videos", videoRouter);
@@ -61,7 +73,7 @@ app.use("/api/v1/subscriptions", subscriptionRouter);
 app.use("/api/v1/payment", paymentRouter);
 app.use("/api/v1/email", emailRouter);
 
-// global error handler
+//  global error handler — ALWAYS LAST
 app.use((err, req, res, next) => {
   const statusCode = err.statusCode || 500;
   const message = err.message || "Internal Server Error";

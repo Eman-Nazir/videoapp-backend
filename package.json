@@ -11,18 +11,20 @@
     "test:coverage": "node --experimental-vm-modules node_modules/jest/bin/jest.js --coverage"
   },
   "jest": {
-  "testEnvironment": "node",
-  "transform": {},
-  "moduleNameMapper": {
-    "^(\\.{1,2}/.*)\\.js$": "$1"
+    "testEnvironment": "node",
+    "transform": {},
+    "moduleNameMapper": {
+      "^(\\.{1,2}/.*)\\.js$": "$1"
+    },
+    "testMatch": [
+      "**/__tests__/**/*.test.js"
+    ],
+    "verbose": true,
+    "setupFiles": [
+      "<rootDir>/jest.setup.js"
+    ],
+    "testTimeout": 40000
   },
-  "testMatch": [
-    "**/__tests__/**/*.test.js"
-  ],
-  "verbose": true,
-  "setupFiles": ["<rootDir>/jest.setup.js"],
-  "testTimeout": 40000
-},
   "keywords": [],
   "author": "",
   "license": "ISC",
@@ -37,19 +39,29 @@
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
     "express-rate-limit": "^8.5.2",
-    "helmet": "^8.2.0",
+    "helmet": "^8.3.0",
     "jsonwebtoken": "^9.0.3",
     "mongoose": "^9.7.4",
     "mongoose-aggregate-paginate-v2": "^1.1.4",
     "multer": "^2.2.0",
     "node-cron": "^4.6.0",
     "nodemailer": "^9.0.3",
-    "stripe": "^22.3.1"
+    "stripe": "^22.3.1",
+    "swagger-jsdoc": "^6.3.0",
+    "swagger-ui-express": "^5.0.1"
   },
   "devDependencies": {
     "@jest/globals": "^30.4.1",
     "jest": "^30.4.2",
     "nodemon": "^3.1.14",
     "supertest": "^7.2.2"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Eman-Nazir/videoapp-backend.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Eman-Nazir/videoapp-backend/issues"
+  },
+  "homepage": "https://github.com/Eman-Nazir/videoapp-backend#readme"
 }
