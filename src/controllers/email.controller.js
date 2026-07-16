@@ -6,6 +6,8 @@ import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { sendOTPEmail, sendPasswordResetEmail } from "../utils/mailer.js";
+import logger from "../utils/logger.js";
+
 
 // GENERATE OTP  6 digit random number
 
@@ -33,12 +35,13 @@ const sendOTP = asyncHandler(async (req, res) => {
 
   try {
     await sendOTPEmail(user.email, otp);
+    logger.info(`OTP sent to: ${user.email}`);
   } catch (error) {
     user.otp = null;
     user.otpExpiry = null;
     await user.save({ validateBeforeSave: false });
 
-    console.error(" sendOTPEmail failed:", error.message);
+      logger.error(`sendOTPEmail failed: ${error.message}`); 
 
     if (error.responseCode === 535) {
       throw new ApiError(
@@ -91,6 +94,8 @@ const verifyOTP = asyncHandler(async (req, res) => {
   user.otpExpiry = null;
   await user.save({ validateBeforeSave: false });
 
+  logger.info(`Email verified: ${user.email}`); 
+
   return res
     .status(200)
     .json(new ApiResponse(200, {}, "Email verified successfully"));
@@ -115,12 +120,15 @@ const forgotPassword = asyncHandler(async (req, res) => {
 
   try {
     await sendPasswordResetEmail(user.email, resetToken);
+    logger.info(`Password reset requested for: ${user.email}`);
   } catch (error) {
     user.passwordResetToken = null;
     user.passwordResetExpiry = null;
     await user.save({ validateBeforeSave: false });
 
-    console.error(" sendPasswordResetEmail failed:", error.message);
+
+      logger.error(`sendPasswordResetEmail failed: ${error.message}`); 
+
 
     if (error.responseCode === 535) {
       throw new ApiError(
@@ -167,7 +175,7 @@ const resetPassword = asyncHandler(async (req, res) => {
   user.passwordResetToken = null;
   user.passwordResetExpiry = null;
   await user.save();
-
+logger.warn(`Password reset completed for: ${user.email}`);
   return res
     .status(200)
     .json(new ApiResponse(200, {}, "Password reset successfully"));

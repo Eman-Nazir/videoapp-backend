@@ -8,6 +8,7 @@ import {
   deleteFromCloudinary,
 } from "../utils/cloudinary.js";
 import { clearCache } from "../middlewares/cache.middleware.js";
+import logger from "../utils/logger.js";
 
 // extract publicId from cloudinary url
 const extractPublicId = (cloudinaryUrl) => {
@@ -17,8 +18,7 @@ const extractPublicId = (cloudinaryUrl) => {
   return folder.startsWith("v") ? filename : `${folder}/${filename}`;
 };
 
-
-// GET ALL VIDEOS 
+// GET ALL VIDEOS
 const getAllVideos = asyncHandler(async (req, res) => {
   const {
     page = 1,
@@ -35,8 +35,8 @@ const getAllVideos = asyncHandler(async (req, res) => {
   const pipeline = [];
 
   const matchConditions = {
-    isPublished: true,  
-    isDeleted: false,   
+    isPublished: true,
+    isDeleted: false,
   };
 
   if (userId) {
@@ -63,7 +63,6 @@ const getAllVideos = asyncHandler(async (req, res) => {
 
   pipeline.push({ $match: matchConditions });
 
-  // sort
   pipeline.push({
     $sort: { [sortBy]: sortType === "asc" ? 1 : -1 },
   });
@@ -113,9 +112,7 @@ const getAllVideos = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, videos, "Videos fetched successfully"));
 });
 
-
 // PUBLISH A VIDEO
-
 const publishAVideo = asyncHandler(async (req, res) => {
   const { title, description } = req.body;
 
@@ -145,6 +142,8 @@ const publishAVideo = asyncHandler(async (req, res) => {
     isPublished: true,
   });
 
+  logger.info(`Video published: "${video.title}" by user: ${req.user._id}`);
+
   await clearCache("/api/v1/videos*");
 
   return res
@@ -152,9 +151,7 @@ const publishAVideo = asyncHandler(async (req, res) => {
     .json(new ApiResponse(201, video, "Video published successfully"));
 });
 
-
-// GET VIDEO BY ID 
-
+// GET VIDEO BY ID
 const getVideoById = asyncHandler(async (req, res) => {
   const { videoId } = req.params;
 
@@ -164,7 +161,7 @@ const getVideoById = asyncHandler(async (req, res) => {
     videoId,
     { $inc: { views: 1 } },
     { new: true }
-  ).populate("owner", "username avatar"); 
+  ).populate("owner", "username avatar");
 
   if (!video) throw new ApiError(404, "Video not found");
 
@@ -173,9 +170,9 @@ const getVideoById = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, video, "Video fetched successfully"));
 });
 
-
+// 
 // UPDATE VIDEO
-
+// 
 const updateVideo = asyncHandler(async (req, res) => {
   const { videoId } = req.params;
   const { title, description } = req.body;
@@ -211,6 +208,8 @@ const updateVideo = asyncHandler(async (req, res) => {
     { new: true }
   );
 
+  logger.info(`Video updated: ${videoId} by user: ${req.user._id}`);
+
   await clearCache("/api/v1/videos*");
 
   return res
@@ -218,9 +217,7 @@ const updateVideo = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, updatedVideo, "Video updated successfully"));
 });
 
-
 // DELETE VIDEO
-
 const deleteVideo = asyncHandler(async (req, res) => {
   const { videoId } = req.params;
 
@@ -239,7 +236,8 @@ const deleteVideo = asyncHandler(async (req, res) => {
   await deleteFromCloudinary(extractPublicId(video.thumbnail));
   await Video.findByIdAndDelete(videoId);
 
-  // clear cache after delete
+  logger.warn(`Video deleted: ${videoId} by user: ${req.user._id}`);
+
   await clearCache("/api/v1/videos*");
 
   return res
@@ -266,6 +264,10 @@ const togglePublishStatus = asyncHandler(async (req, res) => {
     videoId,
     { $set: { isPublished: !video.isPublished } },
     { new: true }
+  );
+
+  logger.info(
+    `Video ${updated.isPublished ? "published" : "unpublished"}: ${videoId} by user: ${req.user._id}`
   );
 
   await clearCache("/api/v1/videos*");

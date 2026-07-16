@@ -1,25 +1,20 @@
-import "dotenv/config";
+import dotenv from "dotenv";
 import connectDB from "./db/index.js";
 import { app } from "./app.js";
+// import { startCronJobs } from "./jobs/cleanupJob.js";
+import logger from "./utils/logger.js";
 
-//  add test route directly here
-app.get("/test-compression", (req, res) => {
-  const data = { message: "test ".repeat(500) };
-  res.json(data);
-});
+dotenv.config();
 
-app.on("error", (error) => {
-  console.log("App Error:", error);
-  throw error;
-});
+const PORT = process.env.PORT || 3000;
 
 connectDB()
   .then(() => {
-    const PORT = process.env.PORT || 8000;
     app.listen(PORT, () => {
-      console.log(`Server is running at port: ${PORT}`);
+      logger.info(`Server is running at port: ${PORT}`);
+      // startCronJobs();
     });
   })
   .catch((err) => {
-    console.log("MongoDB Connection Failed:", err);
+    logger.error("MongoDB connection failed:", err);
   });

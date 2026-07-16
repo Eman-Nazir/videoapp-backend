@@ -8,6 +8,9 @@ import {
 import { ApiResponse } from "../utils/ApiResponse.js";
 import jwt from "jsonwebtoken";
 import mongoose from "mongoose";
+import logger from "../utils/logger.js";
+
+
 const generateAccessAndRefereshTokens = async (userId) => {
   try {
     const user = await User.findById(userId);
@@ -96,10 +99,15 @@ const registerUser = asyncHandler(async (req, res) => {
     throw new ApiError(500, "Something went wrong while registering the user");
   }
 
+  logger.info(`New user registered: ${createdUser.email}`);
+
   return res
     .status(201)
     .json(new ApiResponse(200, createdUser, "User registered Successfully"));
 });
+
+
+
 const loginUser = asyncHandler(async (req, res) => {
   // req body ===> data
   // username or email
@@ -141,6 +149,8 @@ const loginUser = asyncHandler(async (req, res) => {
     user._id
   );
 
+  logger.info(`User logged in: ${user.email}`); 
+
   const loggedInUser = await User.findById(user._id).select(
     "-password -refreshToken"
   );
@@ -165,6 +175,9 @@ const loginUser = asyncHandler(async (req, res) => {
       )
     );
 });
+
+
+
 const logoutUser = asyncHandler(async (req, res) => {
   await User.findByIdAndUpdate(
     req.user._id,
