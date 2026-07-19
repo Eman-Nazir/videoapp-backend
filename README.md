@@ -4,7 +4,15 @@ A production-level REST API for a YouTube-like video platform, built with Node.j
 
 ## Live API
 
-**Base URL:** `https://videoapp-backend-production.up.railway.app/api/v1`
+**Base URL:** `https://videoapp-backend-production-a823.up.railway.app/api/v1`
+
+**Interactive Docs:** `https://videoapp-backend-production-a823.up.railway.app/api-docs`
+
+## Architecture
+
+![VideoApp Architecture](./assets/architecture.png)
+
+Every request flows through Helmet, compression, rate limiting, and CORS before hitting JWT authentication and RBAC. Routes dispatch to controllers, which talk to MongoDB, Redis, Cloudinary, and Stripe. Winston logs every layer to combined.log and error.log, streaming live into Railway in production.
 
 ## Tech Stack
 
@@ -16,8 +24,10 @@ A production-level REST API for a YouTube-like video platform, built with Node.j
 - **Payments:** Stripe
 - **Email:** Nodemailer (OTP verification, password reset)
 - **Background Jobs:** node-cron
+- **Logging:** Winston (structured logs, file + console transports)
 - **Testing:** Jest, Supertest (78+ tests)
 - **Security:** Helmet, express-rate-limit, RBAC
+- **Documentation:** Swagger (OpenAPI 3.0)
 - **Deployment:** Railway
 
 ## Features
@@ -59,6 +69,12 @@ A production-level REST API for a YouTube-like video platform, built with Node.j
 - Stripe checkout session integration
 - Webhook handling for payment confirmation
 
+### Observability
+- Winston structured logging across all controllers
+- Separate error.log for fast failure diagnosis
+- Request logger capturing method, route, status, and response time
+- Live log streaming to Railway in production
+
 ### Security
 - Helmet for HTTP header hardening
 - Rate limiting (general + strict auth limiter)
@@ -77,17 +93,17 @@ A production-level REST API for a YouTube-like video platform, built with Node.j
 | Email | send OTP, verify OTP, forgot/reset password |
 | Payment | create checkout session, webhook |
 
+Full interactive documentation with request/response schemas available at `/api-docs`.
+
 ## Testing
 
 ```bash
 npm test
 ```
 
-
 78 tests covering unit logic (OTP generation, response classes, helper functions) and full integration testing (auth flows, video operations, comments, likes, subscriptions, email).
 
 ## Environment Variables
-
 MONGODB_URI
 PORT
 CORS_ORIGIN
@@ -104,12 +120,6 @@ FRONTEND_URL
 STRIPE_SECRET_KEY
 UPSTASH_REDIS_REST_URL
 UPSTASH_REDIS_REST_TOKEN
-
-## API Documentation
-Interactive Swagger docs available at:
-https://videoapp-backend-production-a823.up.railway.app/api-docs
-
-
 
 ## Local Setup
 
