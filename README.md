@@ -127,7 +127,7 @@ UPSTASH_REDIS_REST_TOKEN
 git clone https://github.com/Eman-Nazir/videoapp-backend.git
 cd videoapp-backend
 npm install
-cp .env.example .env
+cp .env.sample .env
 # fill in your environment variables
 npm run dev
 ```
