@@ -4,9 +4,9 @@ A production-level REST API for a YouTube-like video platform, built with Node.j
 
 ## 🚀 Live Project
 
-- **Base URL:** [https://videoapp-backend-production-a823.up.railway.app/api/v1](https://videoapp-backend-production-a823.up.railway.app/api/v1)
+- **Base URL:** [https://videoapp-backend-gup5.onrender.com/api/v1](https://videoapp-backend-gup5.onrender.com/api/v1)
 
-- **Interactive Docs:** [https://videoapp-backend-production-a823.up.railway.app/api-docs](https://videoapp-backend-production-a823.up.railway.app/api-docs)
+- **Interactive Docs:** [https://videoapp-backend-gup5.onrender.com/api-docs/](https://videoapp-backend-gup5.onrender.com/api-docs/)
 
 ## Architecture
 
